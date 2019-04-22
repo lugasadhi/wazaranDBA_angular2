@@ -1,0 +1,85 @@
+<div id="shrink">
+
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">Shrink Database ( {{type}} )</h2>
+    </div>
+    <app-menu></app-menu>
+  </div>
+
+  <div class="has-header container-fluid">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <mat-card class="col-sm-12 col-md-8 coiche-branch">
+          <mat-card-header>
+            <h6 class="text-bold uppercase">
+              Choice Branch
+            </h6>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="container-fluid">
+              <div class="row" *ngFor="let item of listlog">
+                <mat-checkbox  class="col-sm-6 col-md-3 uppercase" color="primary" name="{{item.server}}" (change)="changed($event, item.server)"  ngModel="true">{{item.server}}</mat-checkbox>
+                <div class="col-sm-6 col-md-9 d-flex space-between">
+                  <span >Size: <b [ngClass]="{'text-success': item.status == 'save','text-warning': item.status == 'warning', 'text-danger':item.status == 'danger'}"> {{item.size}} MB</b></span>
+                  <span>Max Size: <b> {{item.maxsize}} MB</b></span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions class="">
+            <button mat-button class="btn btn-primary btn-block" (click)="this.dialDet = true;execute()">Execute</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dialog result-shrink" *ngIf="dialDet">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Shrink {{type}} Result</p>
+        <button class="d-close" (click)="this.dialDet = false;" [disabled]="this.serverlist.length != this.shrinkRes.length"></button>
+      </div>
+      <div class="d-content" >
+        <div class="" *ngFor="let item of shrinkRes">
+          <div class="d-flex space-between">
+            <div class="">
+              <p class="text-bold uppercase">{{item.server}}</p>
+              <p class="res text-success capitalize">{{item.result}}</p>
+            </div>
+            <div class="">
+              <button mat-button class="btn btn-primary " (click)="this.dialTitle='Result '+this.type+' Shrink @'+item.server; this.dialmsg = item.msg; this.dialog = true; this.dialDet = false;">Detail</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-right">
+        <button mat-button class="btn btn-danger" (click)="this.dialDet = false;" [disabled]="this.serverlist.length != this.shrinkRes.length">Exit</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="dialog dialog-full" *ngIf="dialog">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">{{dialTitle}}</p>
+        <button class="d-close" (click)="this.dialDet = true;this.dialog = false;"></button>
+      </div>
+      <div class="d-content" >
+          <div [innerHTML]="dialmsg">
+          </div>
+      </div>
+      <div class="d-button text-right">
+        <button mat-button class="btn btn-danger" (click)="this.dialDet = true;this.dialog = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="full-loading" *ngIf="loading">
+  <app-spiner></app-spiner>
+</div>

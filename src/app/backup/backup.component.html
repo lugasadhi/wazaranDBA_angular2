@@ -1,0 +1,148 @@
+<div id="bkup">
+
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">Backup</h2>
+    </div>
+    <app-menu></app-menu>
+  </div>
+
+    <div class="has-header container-fluid">
+      <div class="row">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <mat-card class="col-sm-6 coiche-branch">
+              <mat-card-header>
+                <h6 class="text-bold uppercase">
+                  Choice Branch
+                </h6>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="container-fluid">
+                  <div class="row">
+                    <mat-checkbox *ngFor="let item of list" class="col-md-4 col-sm-6 uppercase" color="primary" name="{{item.server}}" (change)="changed($event, item.server)"  ngModel="true">{{item.server}}</mat-checkbox>
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions >
+                <div class="container-fluid">
+                  <button mat-button class="btn btn-primary btn-block" (click)="this.popbkdb = true;">Backup Databases in All Branch</button>
+                </div>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog bkdbform popup" *ngIf="popbkdb">
+      <div class="dialog-content animated bounceIn">
+        <div class="d-header primary">
+          <p class="d-title">Backup Databases</p>
+          <button class="d-close" (click)="this.popbkdb = false;"></button>
+        </div>
+        <form [formGroup]="bkp" (ngSubmit)="bkexecution(bkp)">
+
+          <div class="chips" style="display:block;">
+            <mat-chip-list>
+              <mat-chip color="warn" selected="true" *ngFor="let item of serverlist" class="capitalize chip">{{item.server}}</mat-chip>
+            </mat-chip-list>
+          </div>
+
+          <div class="d-content">
+                <div class="">
+                  <div class="col-sm-12">
+                    <mat-form-field>
+                      <mat-select [(value)]="selected" formControlName="bktype">
+                        <mat-option value="DATABASE">FULL</mat-option>
+                        <mat-option value="LOG">LOG</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <mat-form-field class="col-sm-12" >
+                    <input matInput name='dbbkname' placeholder="Database Backup Name" type="text" formControlName="dbbkname">
+                  </mat-form-field>
+                  <mat-form-field class="col-sm-12" >
+                    <input matInput name='path' matTooltip="Check Folder Must already exsist" placeholder="Path Ex. D:/dbbk/example.bak" type="text" formControlName="path">
+                  </mat-form-field>
+                  <mat-form-field class="col-sm-12" >
+                    <input matInput name='retaindays' placeholder="retaindays" min="0" type="number" formControlName="retaindays">
+                  </mat-form-field>
+
+                  <mat-checkbox class="col-sm-3" color="primary" formControlName="format" [disabled]="selected=='LOG'">Format</mat-checkbox>
+                  <mat-checkbox class="col-sm-3" color="primary" formControlName="diff" >Differential</mat-checkbox>
+                  <mat-checkbox class="col-sm-3" color="primary" formControlName="init" >Init</mat-checkbox>
+                  <mat-checkbox class="col-sm-3" color="primary" formControlName="nounloud" >Nounloud</mat-checkbox>
+                  <mat-checkbox class="col-sm-3" color="primary" formControlName="checksum" >Checksum</mat-checkbox>
+                </div>
+          </div>
+          <div class="text-right d-button">
+            <button mat-button class="btn btn-primary " type="submit" >Execute</button>
+            <button mat-button class="btn btn-danger " (click)="this.popbkdb = false;">Exit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <div class="dialog detList" *ngIf="branchdial">
+      <div class="dialog-content animated bounceIn">
+        <div class="d-header primary">
+          <p class="d-title">Backup Databases {{typebk}}</p>
+          <button class="d-close" (click)="this.branchdial = false;"></button>
+        </div>
+        <div class="d-content">
+            <div class="row">
+              <div class="col-sm-4">
+                <h6>Branch</h6>
+                <div *ngFor="let item of serverlist " class="text-bold uppercase branch-name">{{item.server}}</div>
+              </div>
+              <div class="col-sm-4">
+                <h6>Backup</h6>
+                <div class="bk-status" *ngFor="let item of bkResBranch">
+                  <div class="d-flex space-between align-items-center">
+                    <i class="fa fa-check text-success" aria-hidden="true" matTooltip="Succes" *ngIf="item.status == 'success'"></i>
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true" matTooltip="There's somthing wrong" *ngIf="item.status == 'error'"></i>
+                    <button mat-button class="btn btn-primary " (click)="this.bkvBranch = 'Backup Status '+item.branch; this.bkvmsg=item.msg ;this.bkValDet = true; this.branchdial = false;">Detail</button>
+                  </div>
+                </div>
+                <mat-progress-bar color="warn" mode="indeterminate" *ngIf="this.bkResBranch.length != this.serverlist.length"></mat-progress-bar>
+              </div>
+              <div class="col-sm-4">
+                <h6>Valiadtion</h6>
+                <div class="val-status" *ngFor="let item of bkValBranch">
+                  <div class="d-flex space-between align-items-center">
+                    <i class="fa fa-check text-success" aria-hidden="true" matTooltip="Succes" *ngIf="item.status == 'success'"></i>
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true" matTooltip="There's somthing wrong" *ngIf="item.status == 'error'"></i>
+                    <button mat-button class="btn btn-primary " (click)="this.bkvBranch = 'Backup Validation '+item.branch; this.bkvmsg=item.msg ;this.bkValDet = true; this.branchdial = false;">Detail</button>
+                  </div>
+                </div>
+                <mat-progress-bar color="warn" mode="indeterminate" *ngIf="this.bkValBranch.length != this.serverlist.length"></mat-progress-bar>
+              </div>
+            </div>
+        </div>
+        <div class="text-right d-button">
+          <button mat-button class="btn btn-danger " (click)="this.branchdial = false;">Exit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog dialog-full" *ngIf="bkValDet">
+      <div class="dialog-content animated bounceIn">
+        <div class="d-header primary">
+          <p class="d-title">{{bkvBranch}}</p>
+          <button class="d-close" (click)="this.branchdial = true;this.bkValDet = false;"></button>
+        </div>
+        <div class="d-content" [innerHTML]="bkvmsg">
+        </div>
+        <div class="d-button text-right">
+          <button mat-button class="btn btn-danger" (click)="this.branchdial = true;this.bkValDet = false;">Exit</button>
+        </div>
+      </div>
+    </div>
+
+
+</div>
+<div class="full-loading" *ngIf="loading">
+  <app-spiner></app-spiner>
+</div>

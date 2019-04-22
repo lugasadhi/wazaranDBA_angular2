@@ -1,0 +1,420 @@
+.full {
+  width: 100%; }
+
+.uppercase {
+  text-transform: uppercase; }
+
+.capitalize {
+  text-transform: capitalize; }
+
+.text-bold {
+  font-weight: bold; }
+
+.text-grey {
+  color: rgba(0, 0, 0, 0.54); }
+
+.text-green {
+  color: #2ecc71; }
+
+.text-danger {
+  color: #e74c3c; }
+
+.text-warning {
+  color: #f1c40f; }
+
+.ellapsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; }
+
+.greyScale {
+  -webkit-filter: grayscale(100%);
+  /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%); }
+
+.space-between {
+  justify-content: space-between; }
+
+.titik-dua {
+  position: relative; }
+  .titik-dua:after {
+    content: ":";
+    position: absolute;
+    left: 100%;
+    top: 0; }
+
+.dialog {
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+  .dialog .dialog-content {
+    max-height: 90%;
+    max-width: 90%;
+    min-width: 500px;
+    background: #fff;
+    border-radius: 3px; }
+  .dialog .d-header {
+    padding: 10px 20px;
+    background: #f5f5f5;
+    position: relative; }
+    .dialog .d-header.warning {
+      background: #f1c40f; }
+    .dialog .d-header.primary {
+      background: #3498db; }
+    .dialog .d-header.danger {
+      background: #e74c3c; }
+    .dialog .d-header.secondary {
+      background: #34495e; }
+    .dialog .d-header.info {
+      background: #f1c40f; }
+    .dialog .d-header.success {
+      background: #2ecc71; }
+    .dialog .d-header .d-title {
+      margin: 0;
+      color: #fff;
+      font-size: 18px; }
+  .dialog .d-close {
+    position: absolute;
+    padding: 0;
+    min-width: 0;
+    font-size: 25px;
+    color: rgba(255, 255, 255, 0.4);
+    background: transparent;
+    top: 5px;
+    right: 10px;
+    border: none;
+    transition: all .3s; }
+    .dialog .d-close:after {
+      content: '\f057';
+      font-family: fontawesome;
+      cursor: pointer; }
+    .dialog .d-close:hover {
+      color: white; }
+  .dialog .d-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 10px 20px; }
+  .dialog .d-button {
+    padding: 10px 20px; }
+  .dialog form .d-content {
+    height: 400px; }
+
+.overflow {
+  overflow: auto; }
+
+.table-overflow-x {
+  width: 100%;
+  overflow-x: auto; }
+
+.mat-button.btn-warning {
+  background: #f1c40f;
+  color: #fff; }
+.mat-button.btn-danger {
+  background: #e74c3c;
+  color: #fff; }
+.mat-button.btn-primary {
+  background: #3498db;
+  color: #fff; }
+.mat-button.btn-secondary {
+  background: #34495e;
+  color: #fff; }
+.mat-button.btn-info {
+  background: #f1c40f; }
+.mat-button.btn-success {
+  background: #2ecc71;
+  color: #fff; }
+
+.navbar {
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: #fff; }
+  .navbar.navbar-fix {
+    z-index: 100;
+    position: fixed; }
+  .navbar .main-title {
+    margin: 0; }
+  .navbar .sub-title {
+    color: #aaa;
+    font-size: 12px;
+    margin-left: 3px; }
+  .navbar .server-name {
+    margin-right: 10px; }
+  .navbar .status {
+    margin-left: 10px; }
+    .navbar .status.online {
+      color: #2ecc71;
+      position: relative; }
+      .navbar .status.online i {
+        position: absolute;
+        color: #2ecc71;
+        font-size: 8px;
+        margin-left: 0;
+        left: 110%;
+        top: -2px; }
+
+.has-header {
+  padding-top: 80px; }
+
+.text-success {
+  color: #2ecc71; }
+
+.text-danger {
+  color: #e74c3c; }
+
+.full-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(105, 151, 219, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; }
+  .full-loading.with-status .status {
+    text-align: center;
+    text-align: center;
+    position: fixed;
+    margin-top: 90px;
+    color: #fff; }
+    .full-loading.with-status .status p {
+      margin: 0; }
+  .full-loading .sk-cube-grid .sk-cube {
+    background-color: #fff; }
+
+.spn .text-white {
+  color: #fff;
+  margin-top: 130px;
+  font-weight: bold;
+  letter-spacing: 2px; }
+
+#loader {
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px); }
+
+@keyframes loader {
+  0% {
+    left: -100px; }
+  100% {
+    left: 110%; } }
+#box {
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  animation: animate .5s linear infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 3px; }
+
+@keyframes animate {
+  17% {
+    border-bottom-right-radius: 3px; }
+  25% {
+    transform: translateY(9px) rotate(22.5deg); }
+  50% {
+    transform: translateY(18px) scale(1, 0.9) rotate(45deg);
+    border-bottom-right-radius: 40px; }
+  75% {
+    transform: translateY(9px) rotate(67.5deg); }
+  100% {
+    transform: translateY(0) rotate(90deg); } }
+#shadow {
+  width: 50px;
+  height: 5px;
+  background: #000;
+  opacity: 0.1;
+  position: absolute;
+  top: 59px;
+  left: 0;
+  border-radius: 50%;
+  animation: shadow .5s linear infinite; }
+
+@keyframes shadow {
+  50% {
+    transform: scale(1.2, 1); } }
+body {
+  background: #f5f5f5; }
+
+#dashboard .crd {
+  min-width: 350px;
+  margin-top: 10px;
+  margin-bottom: 10px; }
+#dashboard .card-header {
+  background: transparent;
+  border: none;
+  padding: 0; }
+  #dashboard .card-header .branch-name {
+    font-size: 18px; }
+  #dashboard .card-header .server-name {
+    margin-left: 5px;
+    padding-bottom: 2px;
+    font-size: 12px; }
+  #dashboard .card-header .server-status {
+    font-size: 13px; }
+    #dashboard .card-header .server-status > .status {
+      padding-right: 5px;
+      font-size: 8px; }
+    #dashboard .card-header .server-status.online, #dashboard .card-header .server-status.online .status {
+      color: #2ecc71; }
+    #dashboard .card-header .server-status.offline, #dashboard .card-header .server-status.offline .status {
+      color: #e74c3c; }
+#dashboard .img-server img {
+  margin: 0;
+  max-width: 100%; }
+#dashboard .img-server .db-name {
+  font-size: 12px; }
+#dashboard .connect-time {
+  position: absolute;
+  top: 63px;
+  left: 52%; }
+  #dashboard .connect-time .icon i {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: #fff; }
+    #dashboard .connect-time .icon i.fa-fighter-jet {
+      font-size: 20px;
+      padding-left: 4px;
+      padding-top: 2px;
+      border: 2px solid #2ecc71;
+      background: #2ecc71; }
+    #dashboard .connect-time .icon i.fa-car {
+      font-size: 16px;
+      padding-left: 4px;
+      padding-top: 4px;
+      border: 2px solid #f1c40f;
+      background: #f1c40f; }
+    #dashboard .connect-time .icon i.fa-blind {
+      font-size: 20px;
+      padding-left: 8px;
+      padding-top: 3px;
+      border: 2px solid #e74c3c;
+      background: #e74c3c; }
+  #dashboard .connect-time .icon .desc {
+    font-size: 10px; }
+#dashboard mat-card-content {
+  margin-top: 15px; }
+  #dashboard mat-card-content .detail {
+    margin-top: 10px; }
+    #dashboard mat-card-content .detail .detail-title {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold; }
+#dashboard .last-sync {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 5px 10px;
+  border-radius: 3px; }
+  #dashboard .last-sync p {
+    color: #fff;
+    margin: 0;
+    font-size: 14px; }
+
+#db-detail .content > div {
+  margin-bottom: 15px; }
+#db-detail .sub-card {
+  margin-bottom: 20px; }
+#db-detail .card-title {
+  font-weight: bold;
+  margin: 0;
+  font-size: 18px; }
+#db-detail .card-subtitle {
+  font-size: 12px; }
+
+#checkdb .dialog.result .chkdbres > div {
+  margin-bottom: 10px;
+  margin-top: 5px; }
+
+#shrink .dialog.result-shrink .d-content p {
+  margin: 0; }
+#shrink .dialog.result-shrink .d-content .res {
+  margin-top: -10px;
+  margin-bottom: 10px; }
+
+#wzclosing .title-closing-for {
+  margin-bottom: 0; }
+#wzclosing .title-now {
+  margin-bottom: 15px;
+  margin-top: 0;
+  font-size: 12px; }
+#wzclosing .closing-card {
+  width: 220px; }
+  #wzclosing .closing-card .branch {
+    width: 50%; }
+  #wzclosing .closing-card .status {
+    font-size: 10px;
+    padding-top: 3px; }
+
+#bkup .dialog.bkdbform .dialog-content {
+  width: 600px; }
+#bkup .dialog.bkdbform .chips {
+  overflow: auto;
+  max-height: 80px;
+  padding: 10px 15px;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+  #bkup .dialog.bkdbform .chips .chip {
+    margin-bottom: 10px;
+    margin-left: 0;
+    margin-right: 5px;
+    padding: 5px 10px;
+    min-width: 70px;
+    text-align: center; }
+#bkup .dialog.detList .branch-name {
+  padding-top: 8px;
+  padding-bottom: 14px; }
+#bkup .dialog.detList .bk-status,
+#bkup .dialog.detList .val-status {
+  padding-bottom: 10px; }
+
+#autocheck .dialog.result .dialog-content {
+  width: 90%; }
+  #autocheck .dialog.result .dialog-content .mat-card-header .mat-card-avatar {
+    background-image: url("../image/database.png");
+    background-size: cover;
+    border-radius: 0; }
+  #autocheck .dialog.result .dialog-content .mat-card-header mat-card-title {
+    font-size: 17px;
+    font-weight: bold; }
+#autocheck .dialog.result .d-content .row > * {
+  min-width: 200px;
+  margin-bottom: 10px; }
+#autocheck .dialog.result .d-content .row mat-card {
+  padding: 20px; }
+#autocheck .dialog.result .d-button {
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; }
+  #autocheck .dialog.result .d-button .btn {
+    margin-bottom: 10px; }
+#autocheck .dialog.detail-dial .dialog-content {
+  max-width: 100%;
+  width: 100%;
+  max-height: 100%;
+  height: 100%; }
+#autocheck .dialog.detail-dial .d-content {
+  max-height: calc(100% - 100px); }
+  #autocheck .dialog.detail-dial .d-content .content-max-hight {
+    overflow-y: auto;
+    max-height: 200px; }
+  #autocheck .dialog.detail-dial .d-content .content-max-hight-with-table {
+    overflow-y: auto;
+    max-height: 450px; }
+  #autocheck .dialog.detail-dial .d-content .card {
+    margin-bottom: 25px; }
+
+/*# sourceMappingURL=style.css.map */

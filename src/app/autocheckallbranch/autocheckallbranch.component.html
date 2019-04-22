@@ -1,0 +1,1008 @@
+<div id="autocheck">
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">Auto Check Server</h2>
+    </div>
+    <app-menu></app-menu>
+  </div>
+
+  <div class="has-header container-fluid">
+    <h6></h6>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <mat-card class="col-sm-12 col-md-6 coiche-branch">
+          <mat-card-header>
+            <mat-card-title>
+              <h6 class="text-bold uppercase">
+                Choice Branch
+              </h6>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="row">
+              <mat-checkbox *ngFor="let item of list" class="col-md-4 col-sm-6 uppercase" color="primary" name="{{item.server}}" (change)="changed($event, item.server)"  ngModel="true">{{item.server}}</mat-checkbox>
+            </div>
+
+          </mat-card-content>
+          <mat-card-actions class="">
+            <button mat-button class="btn btn-primary btn-block" (click)="checking()" [disabled]="ckDisable">Start Checking</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full" *ngIf="shrinkConfirm">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header warning">
+        <p class="d-title">Srink LOG Confirm</p>
+      </div>
+      <div class="d-content text-center">
+        <h6>Are you want to shrink {{StatusBranch}}'s LOG </h6>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-success" (click)="this.loading=true; srinkConfrm(true); this.shrinkConfirm = false;">YES</button>
+        <button mat-button class="btn btn-danger" (click)="this.loading=true; srinkConfrm(false); this.shrinkConfirm = false;">NO</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full" *ngIf="killConfirm">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header warning">
+        <p class="d-title">Kill SPID Confirm</p>
+      </div>
+      <div class="d-content text-center">
+        <h6>Are you want to Kill Something That Blocked Process? </h6>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-success" (click)="this.loading=true; killConfrm(true); this.killConfirm = false;">YES</button>
+        <button mat-button class="btn btn-danger" (click)="this.loading=true; killConfrm(false); this.killConfirm = false;">NO</button>
+      </div>
+    </div>
+  </div>
+
+
+<!-- popup -->
+  <div class="dialog dialog-full result" *ngIf="dialRes">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Result</p>
+        <button class="d-close" (click)="this.dialRes = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-md-3 col-sm-12" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <div mat-card-avatar class="example-header-image" ></div>
+                  <mat-card-title>{{item.server}}</mat-card-title>
+                </mat-card-header>
+                <mat-card-actions>
+                  <button mat-button class="btn btn-primary btn-block" (click)="showDetails(item);this.resBranchDet = true; this.dialRes = false;">Show Result</button>
+                </mat-card-actions>
+              </mat-card >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-primary" (click)="this.chkserv = true;">Check Service</button>
+        <button mat-button class="btn btn-primary" (click)="this.ckdbdl =true;">checkDB</button>
+        <button mat-button class="btn btn-primary" (click)="this.dldrivsp =true;">Check Drive Space</button>
+        <button mat-button class="btn btn-primary" (click)="this.dlrows = true;">Database ROWS Spcae</button>
+        <button mat-button class="btn btn-primary" (click)="this.dllogs = true">Database LOGS Spcae</button>
+        <button mat-button class="btn btn-primary" (click)="this.sragndl = true">Check Server Agent</button>
+        <button mat-button class="btn btn-primary" (click)="this.dllogfl = true">Check Log Failed</button>
+        <button mat-button class="btn btn-primary" (click)="this.dlprcd = true">Databse Connection With</button>
+        <button mat-button class="btn btn-primary" (click)="this.bpsdl = true">Batch per Second</button>
+        <button mat-button class="btn btn-primary" (click)="this.dlblkby = true">Check Block By</button>
+      </div>
+    </div>
+  </div>
+
+<!-- dialog details branch result -->
+  <div class="dialog dialog-full detail-dial" *ngIf="resBranchDet">
+    <div class="dialog-content animated bounceIn" *ngFor="let item of detlist">
+      <div class="d-header primary">
+        <p class="d-title capitalize">Result {{item.server}}</p>
+        <button class="d-close" (click)="this.dialRes = true;this.resBranchDet = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="card col-sm-12">
+                <div class="card-header">
+                  Check Service
+                </div>
+                <div class="card-body" *ngFor="let service of item.checkService">
+                  <div class="d-flex space-between">
+                    <p class="text-bold">MSSQLServer</p>
+                    <p>{{service.MSSQLServer}}</p>
+                  </div>
+                  <div class="d-flex space-between">
+                    <p class="text-bold">MSSQLServerOLAPService</p>
+                    <p>{{service.MSSQLServerOLAPService}}</p>
+                  </div>
+                  <div class="d-flex space-between">
+                    <p class="text-bold">SQLServerAgent</p>
+                    <p>{{service.SQLServerAgent}}</p>
+                  </div>
+                  <div class="d-flex space-between">
+                    <p class="text-bold">msdtc</p>
+                    <p>{{service.msdtc}}</p>
+                  </div>
+                  <div class="d-flex space-between">
+                    <p class="text-bold">sqlbrowser</p>
+                    <p>{{service.sqlbrowser}}</p>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    Update Statistics Result
+                </div>
+                <div class="card-body content-max-hight" *ngFor="let updatestats of item.updateStats">
+                  {{updatestats.result}}
+                </div>
+            </div>
+
+            <div class="card col-sm-12" *ngFor="let itm of item.checkDB">
+                <div class="card-header">
+                  <div class="d-flex space-between">
+                    <span>CheckDB</span>
+                    <span [ngClass]="{'text-success': itm.result=='Good', 'text-danger': itm.result=='Has Error'}">{{itm.result}}</span>
+                  </div>
+                </div>
+                <div class="card-body content-max-hight" >
+                  <div [innerHTML]="itm.msg">
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    Disk Space
+                </div>
+                <div class="card-body" *ngFor="let itm of item.diskSpace">
+                  <div class="">
+                    <div class="d-flex space-between text-bold">
+                      <p>
+                        {{itm.drive}}
+                      </p>
+                      <p>
+                        {{itm.fileSystem}}
+                      </p>
+                    </div>
+                    <div class="container-fluid ">
+                      <div class="row">
+                        <p class="col-md-3 col-sm-6 text-bold titik-dua">Free Size</p>
+                        <p class="col-md-9 col-sm-6 ">{{itm.freeSize/1024/1024/1024| number : '1.2-2'}} GB</p>
+                      </div>
+                      <div class="row">
+                        <p class="col-md-3 col-sm-6 text-bold titik-dua">Total Size</p>
+                        <p class="col-md-9 col-sm-6 ">{{itm.totalSize/1024/1024/1024| number : '1.2-2'}} GB</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    ROWS SPACE
+                </div>
+                <div class="card-body" *ngFor="let itm of item.rows">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <p class="text-bold titik-dua col-md-3 col-sm-6">Drive Free</p>
+                      <p class="col-md-9 col-sm-6">{{itm.driveFree}}</p>
+                    </div>
+                    <div class="row">
+                      <p class="text-bold titik-dua col-md-3 col-sm-6">File Used</p>
+                      <p class="col-md-9 col-sm-6">{{itm.fileUsed}}</p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    LOGS SPACE
+                </div>
+                <div class="card-body" *ngFor="let itm of item.logs">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <p class="text-bold titik-dua col-md-3 col-sm-6">Drive Free</p>
+                      <p class="col-md-9 col-sm-6">{{itm.driveFree}}</p>
+                    </div>
+                    <div class="row">
+                      <p class="text-bold titik-dua col-md-3 col-sm-6">File Used</p>
+                      <p class="col-md-9 col-sm-6">{{itm.fileUsed}}</p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    LOGS FAILED (last 7 days)
+                </div>
+                <div class="card-body " >
+                  <div class="container-fluid">
+                    <div class="row" >
+                      <div class="col-sm-12">
+                        <mat-form-field class="full">
+                          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="content-max-hight-with-table full">
+                        <mat-table #table [dataSource]="dataSource" matSort>
+                          <ng-container matColumnDef="date" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.logDate }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="message">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.message}} </mat-cell>
+                          </ng-container>
+
+
+                          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    SERVER AGENT FAILED (last 7 days)
+                </div>
+                <div class="card-body " >
+                  <div class="container-fluid">
+                    <div class="row" >
+                      <div class="col-sm-12">
+                        <mat-form-field class="full">
+                          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="content-max-hight-with-table full">
+                        <mat-table #table [dataSource]="tabSerAgntFail" matSort>
+                          <ng-container matColumnDef="date" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.date }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="stepID">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Step ID </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.stepID}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="name">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="stepName">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Step Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.stepName}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="message">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Message </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.message}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="status">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.status}} </mat-cell>
+                          </ng-container>
+
+                          <mat-header-row *matHeaderRowDef="tabSerAgntFailList"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: tabSerAgntFailList;"></mat-row>
+                        </mat-table>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    Database Connection With
+                </div>
+                <div class="card-body " >
+                  <div class="container-fluid">
+                    <div class="row" >
+                      <div class="col-sm-12">
+                        <mat-form-field class="full">
+                          <input matInput (keyup)="filterListProc($event.target.value)" placeholder="Filter">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="content-max-hight-with-table full">
+                        <mat-table #table [dataSource]="listProc" matSort>
+                          <ng-container matColumnDef="spid" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> SPID </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.spid }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="kpid">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> KPID </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.kpid}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="blocked" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> BLOCKED </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.blocked }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="cmd">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> CMD </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.cmd}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="logintime" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> LOGIN TIME </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.logintime }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="loginname">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> LOGIN NAME </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.loginname}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="status">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> STATUS </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.status}} </mat-cell>
+                          </ng-container>
+
+
+                          <mat-header-row *matHeaderRowDef="listProcColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: listProcColumns;"></mat-row>
+                        </mat-table>
+                      </div>
+
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    Proccess Blocked By
+                </div>
+                <div class="card-body " >
+                  <div class="container-fluid">
+                    <div class="row" >
+                      <div class="col-sm-12">
+                        <mat-form-field class="full">
+                          <input matInput (keyup)="filterBlBy($event.target.value)" placeholder="Filter">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="content-max-hight-with-table full">
+                        <mat-table #table [dataSource]="tabBlockBy" matSort>
+                          <ng-container matColumnDef="spid" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> SPID </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.spid }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="blkby">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Block by </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.blkby}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="REQID" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> REQEUST ID </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.REQID }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="lastBatch">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Last Batch </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.lastBatch}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="DBName" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> DB Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.DBName }} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="ProgramName">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Program Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.ProgramName}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="hostname">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Hostname </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.hostname}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="CPUtime">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> CPU </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.CPUtime}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="status">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.status}} </mat-cell>
+                          </ng-container>
+
+
+                          <mat-header-row *matHeaderRowDef="listBlockByColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: listBlockByColumns;"></mat-row>
+                        </mat-table>
+                      </div>
+
+                      <br>
+                      <br>
+                      <form  #kl="ngForm" (ngSubmit)="kill(kl, item.server)" class="row full">
+
+                        <mat-form-field class="col-sm-12 col-md-8">
+                          <input matInput name='spidkill' placeholder="Kill SPID"  ngModel required type="number" #spidkill="ngModel">
+                        </mat-form-field>
+
+                        <div class="col-sm-12 col-md-4 d-flex align-items-center">
+                          <button mat-button type="submit" class="btn btn-danger" >Kill</button>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="card col-sm-12">
+                <div class="card-header">
+                    Batch Per Second in Last 10  Seconds
+                </div>
+                <div class="card-body " >
+                  <div class="text-center" *ngFor="let itm of item.bps">
+                    <h5>{{itm.batch}} BPS</h5>
+                  </div>
+                  <h5 *ngIf="item.bps.length == 0">0 BPS</h5>
+                </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dialRes = true;this.resBranchDet = false;">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="chkserv">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Check Service All Branches</p>
+        <button class="d-close" (click)="this.msgDial = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12 col-md-4" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content>
+                  <table class="table table-striped" *ngFor="let service of item.checkService">
+                    <tr>
+                      <td>MSSQLServer</td>
+                      <td>{{service.MSSQLServer}}</td>
+                    </tr>
+                    <tr>
+                      <td>MSSQLServerOLAPService</td>
+                      <td>{{service.MSSQLServerOLAPService}}</td>
+                    </tr>
+                    <tr>
+                      <td>SQLServerAgent</td>
+                      <td>{{service.SQLServerAgent}}</td>
+                    </tr>
+                    <tr>
+                      <td>msdtc</td>
+                      <td>{{service.msdtc}}</td>
+                    </tr>
+                    <tr>
+                      <td>sqlbrowser</td>
+                      <td>{{service.sqlbrowser}}</td>
+                    </tr>
+                  </table>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.chkserv = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="ckdbdl">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Check Service All Branches</p>
+        <button class="d-close" (click)="this.ckdbdl = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content *ngFor="let itm of item.checkDB">
+                  <div class="full text-right" >
+                    {{itm.result}}
+                  </div>
+                  <div class="overflow" style="overflow:auto;max-height:300px;" >
+                    <div [innerHTML]="itm.msg"></div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.ckdbdl = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="dldrivsp">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Drive Space All Branches</p>
+        <button class="d-close" (click)="this.dldrivsp = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12 col-md-6" *ngFor="let itm of item.diskSpace">
+
+                        <mat-card >
+                          <div class="text-bold full d-flex space-between capitalize">
+                            <span>
+                              {{itm.drive}}:\
+                            </span>
+                            <span>
+                              {{itm.fileSystem}}
+                            </span>
+                          </div>
+                          <mat-card-content >
+                            <table class="table table-striped">
+                              <tr>
+                                <td>Free Spacce</td>
+                                <td>{{itm.freeSize/1024/1024/1024| number : '1.2-2'}} GB</td>
+                              </tr>
+                              <tr>
+                                <td>Total Space</td>
+                                <td>{{itm.totalSize/1024/1024/1024| number : '1.2-2'}} GB</td>
+                              </tr>
+                            </table>
+                          </mat-card-content>
+                        </mat-card>
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dldrivsp = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="dlrows">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">ROWS in All Branches</p>
+        <button class="d-close" (click)="this.dlrows = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-4" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12" *ngFor="let itm of item.rows">
+                        <table class="table table-striped">
+                          <tr>
+                            <td>Drive Free</td>
+                            <td>{{itm.driveFree}} </td>
+                          </tr>
+                          <tr>
+                            <td>File used</td>
+                            <td>{{itm.fileUsed}} </td>
+                          </tr>
+                        </table>
+
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dlrows = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="dllogs">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">LOGS in All Branches</p>
+        <button class="d-close" (click)="this.dllogs = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-4" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12" *ngFor="let itm of item.logs">
+                        <table class="table table-striped">
+                          <tr>
+                            <td>Drive Free</td>
+                            <td>{{itm.driveFree}} </td>
+                          </tr>
+                          <tr>
+                            <td>File used</td>
+                            <td>{{itm.fileUsed}} </td>
+                          </tr>
+                        </table>
+
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dllogs = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="sragndl">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Server Agent Failed (last 7 days) in All Branches</p>
+        <button class="d-close" (click)="this.sragndl = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12" >
+                        <table class="table table-striped">
+                          <tr>
+                            <th>Date</th>
+                            <th>Step ID</th>
+                            <th>Name</th>
+                            <th>Step Name</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                          </tr>
+                          <tr *ngFor="let itm of item.serverAgent">
+                            <td>{{itm.date}}</td>
+                            <td>{{itm.stepID}}</td>
+                            <td>{{itm.name}}</td>
+                            <td>{{itm.stepName}}</td>
+                            <td>{{itm.message}}</td>
+                            <td>{{itm.status}}</td>
+                          </tr>
+                        </table>
+
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.sragndl = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="dllogfl">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">LOGS Failed (last 7 days) in All Branches</p>
+        <button class="d-close" (click)="this.dllogfl = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12" style="max-height:300px; overflow:auto;">
+                        <table class="table table-striped">
+                          <tr>
+                            <th>Log Date</th>
+                            <th>Message</th>
+                          </tr>
+                          <tr *ngFor="let itm of item.logFailed">
+                            <td>{{itm.logDate}}</td>
+                            <td>{{itm.message}}</td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dllogfl = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="dlprcd">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Database Connection With</p>
+        <button class="d-close" (click)="this.dlprcd = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12" style="max-height:300px; overflow:auto;">
+                        <table class="table table-striped">
+                          <tr>
+                            <th>SPID</th>
+                            <th>KPID</th>
+                            <th>Blocked</th>
+                            <th>Loginname</th>
+                            <th>Login Time</th>
+                            <th>Net Library</th>
+                            <th>Hostname</th>
+                            <th>Name</th>
+                            <th>CMD</th>
+                            <th>Opentran</th>
+                            <th>Status</th>
+                          </tr>
+                          <tr *ngFor="let itm of item.listProces">
+                            <td>{{itm.spid}}</td>
+                            <td>{{itm.kpid}}</td>
+                            <td>{{itm.blocked}}</td>
+                            <td>{{itm.loginname}}</td>
+                            <td>{{itm.logintime}}</td>
+                            <td>{{itm.netlibrary}}</td>
+                            <td>{{itm.hostname}}</td>
+                            <td>{{itm.name}}</td>
+                            <td>{{itm.cmd}}</td>
+                            <td>{{itm.opentran}}</td>
+                            <td>{{itm.status}}</td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dlprcd = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="bpsdl">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Batch Per Second</p>
+        <button class="d-close" (click)="this.bpsdl = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="text-center full" *ngFor="let itm of item.bps">
+                    <span>
+                      {{itm.batch}} BPS
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.bpsdl = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full detail-dial " *ngIf="dlblkby">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Block By</p>
+        <button class="d-close" (click)="this.dlblkby = false;"></button>
+      </div>
+      <div class="d-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <!-- card service -->
+            <div class="col-sm-12" style="margin-bottom: 15px;" *ngFor="let item of listAllresult">
+              <mat-card >
+                <mat-card-header>
+                  <h6 class="text-bold uppercase">
+                    {{item.server}}
+                  </h6>
+                </mat-card-header>
+                <mat-card-content >
+                  <div class="overflow">
+                    <table class="tabel table-striped text-center">
+                      <tr>
+                        <th>Last Batch</th>
+                        <th>SPID</th>
+                        <th>Block By</th>
+                        <th>Hostname</th>
+                        <th>DB Name</th>
+                        <th>REQ ID</th>
+                        <th>Program Name</th>
+                        <th>Command</th>
+                        <th>Login User</th>
+                        <th>Status</th>
+                      </tr>
+                      <tr *ngFor="let itm of item.blockBy">
+                        <td>{{itm.lastBatch}}</td>
+                        <td>{{itm.spid}}</td>
+                        <td>{{itm.blkby}}</td>
+                        <td>{{itm.hostname}}</td>
+                        <td>{{itm.DBName}}</td>
+                        <td>{{itm.REQID}}</td>
+                        <td>{{itm.ProgramName}}</td>
+                        <td>{{itm.command}}</td>
+                        <td>{{itm.login}}</td>
+                        <td>{{itm.status}}</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <br><br>
+
+                  <form  #kl="ngForm" (ngSubmit)="kill(kl, item.server)" class="row full">
+
+                    <mat-form-field class="col-sm-12 col-md-8">
+                      <input matInput name='spidkill' placeholder="Kill SPID"  ngModel required type="number" #spidkill="ngModel">
+                    </mat-form-field>
+
+                    <div class="col-sm-12 col-md-4 d-flex align-items-center">
+                      <button mat-button type="submit" class="btn btn-danger" >Kill</button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-center">
+        <button mat-button class="btn btn-danger" (click)="this.dlblkby = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="dialog dialog-full" *ngIf="msgDial">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">{{msgdialtitle}}</p>
+        <button class="d-close" (click)="this.msgDial = false;"></button>
+      </div>
+      <div class="d-content" [innerHTML]="mshdialcont">
+      </div>
+      <div class="d-button text-right">
+        <button mat-button class="btn btn-danger" (click)="this.msgDial = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="full-loading with-status" *ngIf="loading">
+  <app-spiner></app-spiner>
+  <div class="status">
+    <p class="capitalize">{{StatusBranch}}</p>
+    <p>{{loadingStatus}}</p>
+  </div>
+</div>

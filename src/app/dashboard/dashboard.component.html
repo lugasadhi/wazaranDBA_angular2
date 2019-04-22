@@ -1,0 +1,143 @@
+<div id="dashboard" class="" >
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">Dashboard</h2>
+    </div>
+    <app-menu></app-menu>
+  </div>
+
+  <div class="has-header d-flex flex-wrap ">
+    <div *ngFor="let srvr of server"  class="crd col-md-4 col-sm-12">
+      <mat-card >
+          <div class="card-header">
+            <div class="d-flex align-items-end space-between full ">
+              <span class="uppercase text-bold branch-name" matTooltip="Branch Name">{{srvr.branch}}</span>
+              <span class="text-grey server-name" matTooltip="Server Name">{{srvr.serverStatus.serverName}}</span>
+            </div>
+            <div  class="d-flex justify-content-end server-status" [ngClass]="{'online':  srvr.serverStatus.status =='ONLINE','offline':  srvr.serverStatus.status !='ONLINE'}">
+              <i class="fa fa-circle status animated flash infinite " aria-hidden="true" ></i>
+              <small matTooltip="Server Status" >{{srvr.serverStatus.status}}</small>
+            </div>
+          </div>
+
+          <div class="img-server d-flex justify-content-center flex-wrap">
+            <div>
+              <img [ngClass]="{'greyScale': srvr.serverStatus.status =='OFFLINE'}" mat-card-image src="assets/image/database.png" alt="database">
+            </div>
+            <div class="db-name text-bold full text-center" ><span matTooltip="Database Name">{{srvr.logStatus.dbName}}</span> </div>
+          </div>
+
+          <div class="connect-time">
+            <div class="time-resp" matTooltip="{{srvr.responTime}} milisecond">
+              <div class="icon" *ngIf="srvr.responTime > 120000">
+                <i class="fa fa-blind" aria-hidden="true" [ngClass]="{'greyScale': srvr.serverStatus.status =='OFFLINE'}" ></i>
+                <span class="desc">Slow Response</span>
+              </div>
+              <div class="icon"  *ngIf="srvr.responTime <= 120000 && srvr.responTime >10000">
+                <i class="fa fa-car " aria-hidden="true" [ngClass]="{'greyScale': srvr.serverStatus.status =='OFFLINE'}" ></i>
+                <span class="desc">Normal Response</span>
+              </div>
+              <div class="icon" *ngIf="srvr.responTime <= 10000">
+                <i class="fa fa-fighter-jet" aria-hidden="true" [ngClass]="{'greyScale': srvr.serverStatus.status =='OFFLINE'}" ></i>
+                <span class="desc">Fast Response</span>
+              </div>
+            </div>
+          </div>
+
+          <mat-card-content>
+            <!-- content -->
+            <mat-tab-group  *ngIf="srvr.serverStatus.status =='ONLINE'">
+              <mat-tab label="Rows" *ngIf="srvr.phisicStatus != undefined">
+                <div class="detail ">
+                    <h3 class="detail-title">Row Details</h3>
+                    <div class="details d-flex flex-wrap">
+                      <span class="titik-dua  col-md-4 col-sm-3">Path</span>
+                      <span class="col-sm-9 col-md-8 ellapsis" matTooltip="{{srvr.phisicStatus.path}}"> {{srvr.phisicStatus.path}}</span>
+                      <span class="titik-dua  col-md-4 col-sm-3">Autogrowth</span>
+                      <span class="col-sm-9 col-md-8 ellapsis">{{srvr.phisicStatus.autoGrowth}}</span>
+                      <span class="titik-dua  col-md-4 col-sm-3">File Size</span>
+                      <span class="col-sm-9 col-md-8 ellapsis">{{srvr.phisicStatus.fileSize}}</span>
+                      <span class="titik-dua  col-md-4 col-sm-3">File Used</span>
+                      <span class="col-sm-9 col-md-8 ellapsis">{{srvr.phisicStatus.fileUsed}}</span>
+                      <span class="titik-dua  col-md-4 col-sm-3">File Free ( % )</span>
+                      <span class="col-sm-9 col-md-8 ellapsis">{{srvr.phisicStatus.fileFree}} ( {{srvr.phisicStatus.fileFreePercentage}} )</span>
+                    </div>
+                    <h3 class="detail-title">Drive Details</h3>
+                    <div class="details d-flex flex-wrap">
+                      <span class="titik-dua  col-md-4 col-sm-3">Drive</span>
+                      <span class="col-sm-9 col-md-8 ellapsis"  matTooltip="Drive where Database's Row installed">{{srvr.phisicStatus.drive}}</span>
+                      <span class="titik-dua  col-md-4 col-sm-3">Disk Total </span>
+                      <span class="col-sm-9 col-md-8 ellapsis">{{srvr.phisicStatus.driveTotalVolume}}</span>
+                      <span class="titik-dua  col-md-4 col-sm-3">Disk Free ( % )</span>
+                      <span class="col-sm-9 col-md-8 ellapsis">{{srvr.phisicStatus.driveSpaceVolume}} ( {{srvr.phisicStatus.driveSpacePercentage}} )</span>
+                    </div>
+                </div>
+              </mat-tab>
+              <mat-tab label="Log" *ngIf="srvr.logStatus.logSize !=''">
+                <div class="detail">
+                  <h3 class="detail-title">Log Details</h3>
+                  <div class="details d-flex flex-wrap">
+                    <span class="titik-dua  col-md-4 col-sm-3">Path</span>
+                    <span class="col-sm-9 col-md-8 ellapsis" matTooltip="{{srvr.logDetailStatus.path}}"> {{srvr.logDetailStatus.path}}</span>
+                    <span class="titik-dua  col-md-4 col-sm-3">Autogrowth</span>
+                    <span class="col-sm-9 col-md-8 ellapsis">{{srvr.logDetailStatus.autoGrowth}}</span>
+                    <span class="titik-dua col-md-4 col-sm-3">  Log Size</span>
+                    <span class="col-sm-9 col-md-8 ellapsis" *ngIf="srvr.logStatus.maxSize > 0" [ngClass]="{'warning': srvr.logStatus.logSize/srvr.logStatus.maxSize > 0.5, 'danger': srvr.logStatus.logSize/srvr.logStatus.maxSize > 0.75}">{{srvr.logStatus.logSize}} MB</span>
+                    <span class="col-sm-9 col-md-8 ellapsis" *ngIf="srvr.logStatus.maxSize <= 0">{{srvr.logStatus.logSize}} MB</span>
+                    <span class="titik-dua  col-md-4 col-sm-3">File Used</span>
+                    <span class="col-sm-9 col-md-8 ellapsis">{{srvr.logDetailStatus.fileUsed}}</span>
+                    <span class="titik-dua  col-md-4 col-sm-3">File Free ( % )</span>
+                    <span class="col-sm-9 col-md-8 ellapsis">{{srvr.logDetailStatus.fileFree}} ( {{srvr.logDetailStatus.fileFreePercentage}} )</span>
+                  </div>
+
+                  <h3 class="detail-title">Drive Details</h3>
+                  <div class="details d-flex flex-wrap">
+                    <span class="titik-dua  col-md-4 col-sm-3">Drive</span>
+                    <span class="col-sm-9 col-md-8 ellapsis"  matTooltip="Drive where Database's Row installed">{{srvr.logDetailStatus.drive}}</span>
+                    <span class="titik-dua  col-md-4 col-sm-3">Disk Total </span>
+                    <span class="col-sm-9 col-md-8 ellapsis">{{srvr.logDetailStatus.driveTotalVolume}}</span>
+                    <span class="titik-dua  col-md-4 col-sm-3">Disk Free ( % )</span>
+                    <span class="col-sm-9 col-md-8 ellapsis">{{srvr.logDetailStatus.driveSpaceVolume}} ( {{srvr.logDetailStatus.driveSpacePercentage}} )</span>
+                  </div>
+                </div>
+              </mat-tab>
+              <mat-tab label="Backup">
+                <div class="detail" *ngIf="srvr.backupList[0] == undefined">
+                  <h3 class="detail-title text-center">Never Backup Before</h3>
+                </div>
+                <div class="detail" *ngIf="srvr.backupList[0] != undefined">
+                  <h3 class="detail-title">Last Backup Details</h3>
+                  <div class="details d-flex flex-wrap">
+                    <span class="titik-dua  col-md-5 col-sm-4">Path</span>
+                    <span class="col-sm-8 col-md-7 ellapsis"> {{srvr.backupList[0].path}}</span>
+                    <span class="titik-dua  col-md-5 col-sm-4">Backup Date</span>
+                    <span class="col-sm-8 col-md-7 ellapsis"> {{srvr.backupList[0].bkdate}}</span>
+                    <span class="titik-dua  col-md-5 col-sm-4">Size</span>
+                    <span class="col-sm-8 col-md-7 ellapsis"> {{srvr.backupList[0].size}}</span>
+                    <span class="titik-dua  col-md-5 col-sm-4">Backup Speed</span>
+                    <span class="col-sm-8 col-md-7 ellapsis"> {{srvr.backupList[0].time}}</span>
+                    <span class="titik-dua  col-md-5 col-sm-4">Backup Type</span>
+                    <span class="col-sm-8 col-md-7 ellapsis"> {{srvr.backupList[0].bktype}}</span>
+                    <span class="titik-dua  col-md-5 col-sm-4">Recovery Model</span>
+                    <span class="col-sm-8 col-md-7 ellapsis"> {{srvr.backupList[0].recModel}}</span>
+                  </div>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </mat-card-content>
+          <mat-card-actions  >
+            <a  [routerLink]="['/database/',srvr.branch]" target="_blank" class="btn btn-block btn-primary" mat-button>Detail</a>
+          </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="last-sync animated fadeInUp">
+    <p>{{lastDataTime}}</p>
+  </div>
+</div>
+
+
+<div class="full-loading" *ngIf="loading">
+  <app-spiner></app-spiner>
+</div>

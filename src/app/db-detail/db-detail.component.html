@@ -1,0 +1,327 @@
+<div id="db-detail" class="dbdet" >
+
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">{{branch}} </h2>
+        <div class="d-flex sub-title" *ngFor="let server of srvstatus">
+          <div class="server-name">
+            {{server.serverName}}
+          </div>
+          -
+          <div class="status" [ngClass]="{'online': server.status=='ONLINE' }">
+            {{server.status}}
+            <i class="fa fa-circle status animated flash infinite " aria-hidden="true" ></i>
+          </div>
+       </div>
+    </div>
+
+    <div class="menu">
+      <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item  [routerLink]="['/dashboard']"> Goto Dashboard</button>
+        <button mat-menu-item (click)="checkDbStat()"> Check Status database </button>
+        <button mat-menu-item (click)="stats()"> CHECKSTATS</button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <div class="container-fluid has-header">
+
+    <div class="container-fluid ">
+      <div class="content ">
+        <div class="general">
+          <mat-card >
+            <div class="header">
+              <div class="card-title">General Status </div>
+            </div>
+            <mat-card-content>
+              <div style="padding-top: 10px;" >
+                <div class="row" *ngFor="let item of dbGen" >
+                  <div class="col-md-6 col-sm-12">
+                    <div>Database name : <b>{{item.name}} </b></div>
+                    <div>Database id : <b>{{item.database_id}} </b></div>
+                    <div>Database source : <b>{{item.source_database_id}} </b></div>
+                    <div>Created : <b>{{item.create_date}} </b></div>
+                    <div>User Access: <b>{{item.user_access_desc}} </b></div>
+                  </div>
+                  <div class="col-md-6 col-sm-12">
+                    <div>Collation : <b>{{item.collation_name}} </b></div>
+                    <div>Compatibility Level : <b>{{item.compatibility_level}} </b></div>
+                    <div>Status : <b>{{item.state_desc}} </b></div>
+                    <div>Page Verify : <b>{{item.page_verify_option_desc}} </b></div>
+                    <div>Log Reuse : <b>{{item.log_reuse_wait_desc}} </b></div>
+                  </div>
+                </div>
+                <!-- <div>Respon Time : <b>{{responTime}} milisecond</b></div>
+                <div>Last Sync : <b>{{lastSync}}</b> </div> -->
+                <div class="d-flex space-between" style="margin-top:15px">
+                  <div>
+                    Database Status: <b class="uppercase" [ngClass]="{'text-green': checkdbres=='Good','text-danger': checkdbres=='Has Error','text-warning': checkdbres=='not checking'}">{{checkdbres}}</b>
+                  </div>
+                  <div >
+                    <button mat-button class="btn btn-primary btn-sm" (click)="checkdb()"> CHECKDB</button>
+                    <button mat-button class="btn btn-primary btn-sm" *ngIf="checkdbres != 'not checking'" (click)="this.dialogTitle = 'CHECKDB RESULT';this.cdbdialog = true;cdbres()">Show Result</button>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+       <div class="phisic">
+          <h6 class="uppercase">Drive Phisic</h6>
+          <div class="row">
+            <div class="sub-card col-md-6 col-sm-12"  *ngFor="let drive of dataPhisic">
+              <mat-card >
+                <div class="header">
+                  <div class="card-title">Drive {{drive.drive}}:/</div>
+                  <div class="card-subtitle">{{drive.name}}&nbsp;</div>
+                </div>
+                <mat-card-content>
+                  <div class="d-flex flex-wrap">
+                    <div class="col-sm-12">
+                      <canvas baseChart
+                      [data]="phisicDataChart(drive.freeSize, drive.totalSize)"
+                      [labels]="phisicLabel(drive.freeSize, drive.totalSize)"
+                      [chartType]="'doughnut'"
+                      >
+                    </canvas>
+                  </div>
+                  <div class="col-sm-12 d-flex space-between">
+                    <p class="text-bold display-6">{{drive.fileSystem}}</p>
+                    <p>Total Size : <b> {{drive.totalSize/1024/1024/1024| number : '1.2-2'}} GB</b></p>
+                  </div>
+                </div>
+              </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+
+        <div class="phisic-log" *ngFor="let rw of dataRL">
+          <h6 class="uppercase">DATABASE {{rw.type}}</h6>
+          <div class="row">
+            <div class="sub-card col-md-12 col-sm-12">
+              <mat-card >
+                <div class="header">
+                  <div class="card-title uppercase">{{rw.type}} </div>
+                  <div class="card-subtitle"> {{rw.fileName}}</div>
+                </div>
+                <div class="charts-content d-flex justify-content-center">
+                  <div class="" style="width:600px">
+                    <canvas baseChart
+                    [data]="logDataChart(rw.fileSize, rw.driveTotalVolume, rw.driveSpaceVolume)"
+                    [labels]="rowLabel(rw.fileSize, rw.driveTotalVolume, rw.driveSpaceVolume)"
+                    [chartType]="'doughnut'"
+                    >
+                  </canvas>
+                  <p class="text-center text-bold">{{rw.drive}}</p>
+                  </div>
+                </div>
+                <mat-card-content>
+                  <div class="row">
+                    <div class="col-md-6 col-sm-12 row">
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">auto growth</span>
+                      <span class="text-bold col-md-9 col-sm-8">{{rw.autoGrowth}}</span>
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">file size</span>
+                      <span class="text-bold col-md-9 col-sm-8">{{rw.fileSize}}</span>
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">file used</span>
+                      <span class="text-bold col-md-9 col-sm-8">{{rw.fileUsed}}</span>
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">file free( % ) </span>
+                      <span class="text-bold col-md-9 col-sm-8">{{rw.fileFree}} ({{rw.fileFreePercentage}})</span>
+                      <span class="titik-dua capitalize col-md-3 col-sm-4" *ngIf="rw.type == 'LOG'">Limit Size </span>
+                      <span class="text-bold col-md-9 col-sm-8" *ngIf="rw.type == 'LOG'" ><span *ngFor="let lmx of logmax">  {{lmx.maxsize| number}} </span> MB</span>
+
+                    </div>
+                    <div class="col-md-6 col-sm-12 row">
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">path</span>
+                      <span class="text-bold col-md-9 col-sm-8">{{rw.path}}</span>
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">drive free space</span>
+                      <span class="text-bold col-md-9 col-sm-8"> {{rw.driveSpaceVolume}} ({{rw.driveSpacePercentage}}) </span>
+                      <span class="titik-dua capitalize col-md-3 col-sm-4">drive total space</span>
+                      <span class="text-bold col-md-9 col-sm-8">{{rw.driveTotalVolume}}</span>
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <div class="text-right">
+                    <button mat-button class="btn btn-warning" (click)="shrinking(rw.type)">Shrink</button>
+                    <button mat-button class="btn btn-danger" (click)="this.dialbkdb = true;this.bktitle = 'Backup Full Database'; this.typdisable = true; this.formatdisable = false; chgTyp('DATABASE')">Backup FULL</button>
+                  </div>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+
+        <div class="dtbk">
+          <h6 class="full uppercase">Backup</h6>
+          <div class="row">
+            <div class="sub-card col-sm-12" >
+              <mat-card >
+                <div class="header">
+                  <div class="card-title">History</div>
+                </div>
+                <mat-card-content>
+
+                  <div class="">
+                    <div class="example-header">
+                      <mat-form-field>
+                        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                      </mat-form-field>
+                    </div>
+
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                      <ng-container matColumnDef="date" >
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.bkdate }} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.dbName}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.bktype}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="path">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Path </mat-header-cell>
+                        <mat-cell *matCellDef="let element" matTooltip="{{element.path}}" class="ellapsis"> {{element.path}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="recModel">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Recovery Model </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.recModel}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="size">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Size </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.size}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="time">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Time </mat-header-cell>
+                        <mat-cell *matCellDef="let element" > {{element.time}} </mat-cell>
+                      </ng-container>
+
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator
+                                  [pageSize]="5"
+                                  [pageSizeOptions]="[5, 10, 20]">
+                   </mat-paginator>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <div class="text-right">
+                    <button mat-button class="btn btn-warning" (click)="this.dialVer = true;">Check Backup Validation</button>
+                    <button mat-button class="btn btn-danger" (click)="this.dialbkdb = true;this.bktitle = 'Backup Database'; this.typdisable = false;this.formatdisable = false; chgTyp('DATABASE')">Backup</button>
+                  </div>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="dialog backup" *ngIf="dialbkdb">
+  <div class="dialog-content animated bounceIn">
+    <div class="d-header primary">
+      <p class="d-title">Backup Form</p>
+      <button class="d-close" (click)="this.dialbkdb = false;"></button>
+    </div>
+      <form [formGroup]="bk" (ngSubmit)="backupSubmit(bk)">
+        <div class="d-content ">
+          <div class="row">
+            <mat-form-field class="col-sm-12">
+              <mat-select placeholder="Backup Type" [(value)]="selected" formControlName="bktype" [disabled]="typdisable">
+                <mat-option  value="DATABASE">Full Backup</mat-option>
+                <mat-option  value="LOG">Log Backup</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col-sm-12" >
+              <input matInput name='dbbkname' placeholder="Database Backup Name" type="text" formControlName="dbbkname" >
+            </mat-form-field>
+            <mat-form-field class="col-sm-12" >
+              <input matInput name='path' placeholder="Path Ex. D:/dbbk/example.bak" type="text" formControlName="path" >
+            </mat-form-field>
+            <small>Check Folder Must already exsist</small>
+            <mat-form-field class="col-sm-12" >
+              <input matInput name='retaindays' placeholder="retaindays" type="number" formControlName="retaindays">
+            </mat-form-field>
+
+            <mat-checkbox class="col-sm-3" color="primary" formControlName="format"  [disabled]="formatdisable || this.selected == 'LOG'">Format</mat-checkbox>
+            <mat-checkbox class="col-sm-3" color="primary" formControlName="diff">Differential</mat-checkbox>
+            <mat-checkbox class="col-sm-3" color="primary" formControlName="init">Init</mat-checkbox>
+            <mat-checkbox class="col-sm-3" color="primary" formControlName="nounloud">Nounloud</mat-checkbox>
+            <mat-checkbox class="col-sm-3" color="primary" formControlName="checksum">Checksum</mat-checkbox>
+          </div>
+        </div>
+
+        <div class="d-button text-right">
+          <button mat-button type="submit" class=" btn-primary btn " >Excecute</button>
+          <button mat-button class=" btn-danger btn " (click)="this.dialbkdb = false;">Exit</button>
+        </div>
+      </form>
+  </div>
+</div>
+
+<div class="dialog backup" *ngIf="dialVer">
+  <div class="dialog-content animated bounceIn">
+    <div class="d-header primary">
+      <p class="d-title ">BAKCUP VERIVICATION</p>
+      <button class="d-close" (click)="this.dialVer = false;"></button>
+    </div>
+      <form [formGroup]="bkp" (ngSubmit)="bkVer(bkp)">
+        <div class="d-content ">
+          <div class="row">
+            <div class="col-sm-12 row">
+              <mat-form-field class="col-sm-12" *ngIf="!this.sld">
+                <mat-select placeholder="Choose path backup" [(value)]="selected" formControlName="path" >
+                  <mat-option   *ngFor="let bk of backupDatabase" value="{{bk.path}}">{{bk.path}} - {{bk.dbName}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="col-sm-12" *ngIf="this.sld">
+                <input matInput name='paths' placeholder="Path" formControlName="paths">
+              </mat-form-field>
+            </div>
+            <div class="col-sm-12">
+              <mat-slide-toggle color="primary" [checked]="sld" (change)="sld = !sld">Change Input</mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-button text-right">
+          <button mat-button type="submit" class=" btn-warning btn " >Check</button>
+          <button mat-button class=" btn-danger btn " (click)="this.dialVer = false;">Exit</button>
+        </div>
+      </form>
+  </div>
+</div>
+
+<div class="dialog dialog-full" *ngIf="cdbdialog">
+  <div class="dialog-content animated bounceIn">
+    <div class="d-header success">
+      <p class="d-title">{{dialogTitle}}</p>
+      <button class="d-close" (click)="this.cdbdialog = false;"></button>
+    </div>
+    <div class="d-content" >
+      <div class="row">
+        <div class="col-sm-12" [innerHTML]="dialogMsg">
+        </div>
+      </div>
+    </div>
+    <div class="d-button text-right">
+      <button mat-button class=" btn-danger btn " (click)="this.cdbdialog = false;">Exit</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="full-loading" *ngIf="loading">
+  <app-spiner></app-spiner>
+</div>

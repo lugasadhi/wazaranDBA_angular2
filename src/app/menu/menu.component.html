@@ -1,0 +1,24 @@
+<nav class="d-flex justify-content-end">
+  <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item [routerLink]="['/dashboard']"> Dashboard</button>
+    <button mat-menu-item [matMenuTriggerFor]="wzmonitor">Wazaran Monitor</button>
+    <button mat-menu-item [matMenuTriggerFor]="action">Databases Control</button>
+    <button mat-menu-item [routerLink]="['/autocheck']"> Auto Check</button>
+    <button mat-menu-item [routerLink]="['/user']"> User</button>
+    <button mat-menu-item [routerLink]="['/log']"> Log</button>
+    <button mat-menu-item [routerLink]="['/setting']">Setting</button>
+  </mat-menu>
+  <mat-menu #action="matMenu">
+    <button mat-menu-item [routerLink]="['/checkdb']"> CheckDB</button>
+    <button mat-menu-item [routerLink]="['/shrink/','log']"> Shrink Log</button>
+    <button mat-menu-item [routerLink]="['/shrink/','database']" disabled> Shrink Database</button>
+    <button mat-menu-item [routerLink]="['/backup']"> Backup Database</button>
+    <button mat-menu-item [routerLink]="['/tracking']"> Tracking</button>
+    <button mat-menu-item [routerLink]="['/processBlocked']">Proccess</button>
+  </mat-menu>
+
+  <mat-menu #wzmonitor="matMenu">
+    <button mat-menu-item [routerLink]="['/wazaran/closing']"> Closing</button>
+  </mat-menu>
+</nav>

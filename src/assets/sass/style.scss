@@ -1,0 +1,297 @@
+@import "variable.scss";
+@import "global.scss";
+@import "spinner.scss";
+
+
+body{
+  background: $background;
+}
+
+// dashboard
+#dashboard{
+  .crd{
+    min-width: 350px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .card-header{
+    background: transparent;
+    border:none;
+    padding: 0;
+    .branch-name{
+      font-size: 18px;
+    }
+    .server-name{
+      margin-left: 5px;
+      padding-bottom: 2px;
+      font-size: 12px;
+    }
+
+    .server-status{
+      font-size: 13px;
+      &>.status{
+        padding-right: 5px;
+        font-size: 8px;
+      }
+      &.online,
+      &.online .status{
+        color: $green;
+      }
+      &.offline,
+      &.offline .status{
+        color: $red;
+      }
+    }
+  }
+  .img-server{
+    img{
+      margin: 0;
+      max-width: 100%;
+    }
+    .db-name{
+      font-size: 12px;
+    }
+  }
+  .connect-time{
+    position: absolute;
+    top: 63px;
+    left: 52%;
+    .icon {
+      i{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: #fff;
+
+        &.fa-fighter-jet{
+          font-size: 20px;
+          padding-left: 4px;
+          padding-top: 2px;
+          border: 2px solid $green;
+          background: $green;
+        }
+        &.fa-car{
+          font-size: 16px;
+          padding-left: 4px;
+          padding-top: 4px;
+          border: 2px solid $yellow;
+          background: $yellow;
+        }
+        &.fa-blind{
+          font-size: 20px;
+          padding-left: 8px;
+          padding-top: 3px;
+          border: 2px solid $red;
+          background: $red;
+        }
+      }
+      .desc{
+        font-size: 10px;
+      }
+    }
+  }
+   mat-card-content{
+      margin-top: 15px;
+      .detail{
+        margin-top: 10px;
+        .detail-title{
+          font-size: 16px;
+          margin-top: 10px;
+          font-weight: bold;
+        }
+      }
+  }
+  .last-sync{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
+    padding: 5px 10px;
+    border-radius: 3px;
+    p{
+      color: #fff;
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+  .dialog{
+    &.backup{
+
+    }
+  }
+}
+
+#db-detail{
+  .content{
+    &>div{
+      margin-bottom: 15px;
+    }
+  }
+
+  .sub-card{
+    margin-bottom: 20px;
+  }
+  .card-title{
+    font-weight: bold;
+    margin: 0;
+    font-size: 18px;
+  }
+  .card-subtitle{
+    font-size: 12px;
+  }
+}
+
+#checkdb{
+  .dialog{
+    &.result{
+      .chkdbres{
+        &>div{
+          margin-bottom: 10px;
+          margin-top: 5px;
+        }
+        i{
+
+        }
+      }
+    }
+  }
+}
+
+#shrink{
+  .dialog.result-shrink{
+    .d-content{
+      p{
+        margin: 0;
+      }
+      .res{
+        margin-top: -10px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+#wzclosing{
+  .title-closing-for{
+    margin-bottom: 0;
+  }
+  .title-now{
+      margin-bottom: 15px;
+      margin-top: 0;
+      font-size: 12px;
+  }
+
+  .closing-card{
+    width: 220px;
+    .branch{
+      width: 50%;
+    }
+    .status{
+      font-size: 10px;
+      padding-top: 3px;
+    }
+  }
+}
+
+#bkup{
+  .dialog{
+    &.bkdbform{
+      .dialog-content{
+        width: 600px;
+      }
+      .chips{
+        overflow: auto;
+        max-height: 80px;
+        padding: 10px 15px;
+        border-top: 1px solid $grey;
+        border-bottom: 1px solid $grey;
+        box-shadow: 0 1px 2px rgba(0,0,0,.3);
+
+        .chip{
+          margin-bottom: 10px;
+          margin-left: 0;
+          margin-right: 5px;
+          padding: 5px 10px;
+          min-width: 70px;
+          text-align: center;
+        }
+      }
+    }
+
+    &.detList{
+      .branch-name{
+        padding-top: 8px;
+        padding-bottom: 14px;
+      }
+      .bk-status,
+      .val-status{
+        padding-bottom: 10px;
+      }
+    }
+  }
+}
+
+#autocheck{
+  .dialog{
+    &.result{
+      .dialog-content{
+        width: 90%;
+
+        .mat-card-header{
+           .mat-card-avatar {
+             background-image: url('../image/database.png');
+             background-size: cover;
+             border-radius:0;
+           }
+          mat-card-title{
+            font-size: 17px;
+            font-weight: bold;
+          }
+        }
+      }
+      .d-content{
+        .row{
+          &>*{
+            min-width: 200px;
+            margin-bottom: 10px;
+          }
+          mat-card{
+            padding: 20px;
+          }
+        }
+      }
+
+      .d-button{
+        box-shadow: 0 -1px 4px rgba(0,0,0,.3);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        .btn{
+          margin-bottom: 10px;
+        }
+      }
+    }
+    &.detail-dial{
+      .dialog-content{
+        max-width: 100%;
+        width: 100%;
+        max-height: 100%;
+        height: 100%;
+      }
+      .d-content{
+        max-height: calc(100% - 100px);
+        .content-max-hight{
+          overflow-y: auto;
+          max-height: 200px;
+        }
+        .content-max-hight-with-table{
+          overflow-y: auto;
+          max-height: 450px;
+        }
+        .card{
+          margin-bottom: 25px;
+        }
+      }
+    }
+  }
+}

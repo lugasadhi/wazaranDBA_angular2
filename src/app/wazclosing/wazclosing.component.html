@@ -1,0 +1,69 @@
+<div id="wzclosing">
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">Closing Wazaran</h2>
+    </div>
+    <app-menu></app-menu>
+  </div>
+
+
+  <div class="has-header container-fluid">
+    <h6 class="title-closing-for">Closing For : <span> {{dateClosing| date:'dd MMMM yyyy'}} </span> <span *ngIf="day == 6"> and {{dateClosing2| date:'dd MMMM yyyy'}}</span> </h6>
+    <p class="title-now">Now : {{dateNow | date:'dd MMMM yyyy'}}</p>
+    <div class="row justify-content-center">
+      <mat-card class="closing-card " *ngFor="let item of result">
+        <mat-card-content>
+          <div class="d-flex space-between">
+            <div class="uppercase text-bold branch ellapsis"  matTooltip="{{item.branch}}"> {{item.branch}}</div>
+            <div class="status" [ngClass]="{'text-success': item.status == 'CLOSING', 'text-danger' : item.status == 'NOT CLOSING'}"> {{item.status}}</div>
+          </div>
+          <div class="">
+            <button mat-button class="btn btn-primary btn-block" (click)="this.details = item.dbdet; this.dialDet = true;">Last 48 hours Backup</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="dialog dialog-full" *ngIf="dialDet">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Result CheckDB</p>
+        <button class="d-close" (click)="this.cdbdialog = true;this.dialDet = false;"></button>
+      </div>
+      <div class="d-content">
+        <div *ngIf="details == ''">
+          <p>Empty</p>
+        </div>
+        <table class="table" *ngIf="details != ''">
+          <tr>
+            <th>Database Name</th>
+            <th>Backup Date</th>
+            <th>Type</th>
+            <th>Path</th>
+            <th>Size</th>
+            <th>Time</th>
+          </tr>
+          <tr  *ngFor="let det of details">
+            <td>{{det.dbName}}</td>
+            <td>{{det.bkdate}}</td>
+            <td>{{det.bktype}}</td>
+            <td>{{det.path}}</td>
+            <td>{{det.size}}</td>
+            <td>{{det.time}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="d-button text-right">
+        <button mat-button class="btn btn-danger" (click)="this.cdbdialog = true;this.dialDet = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+
+<div class="full-loading" *ngIf="loading">
+  <app-spiner></app-spiner>
+</div>

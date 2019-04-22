@@ -1,0 +1,49 @@
+<div class="register login has-header height-fit">
+  <div class="black-op-container d-flex justify-content-center">
+    <mat-card class="animated bounceIn col-sm-6">
+      <h3 class="title">Sign In</h3>
+      <form [formGroup]="login" (ngSubmit)="onSubmit(login)">
+        <div class=" input-contener row">
+          <div class="uname col-md-12">
+            <mat-form-field [ngClass]="{'error':userErr}" class="full">
+              <input matInput name='username' placeholder="Username / Email" formControlName="username" (keyup)="keyup()">
+            </mat-form-field>
+            <mat-error *ngIf="userErr">{{userErrMsg}}</mat-error>
+          </div>
+
+
+          <div class="pass col-md-12">
+            <mat-form-field  [ngClass]="{'error':passErr}" class="full">
+              <input matInput name='password' placeholder="Password" type="password" formControlName="password" (keyup)="keyup()"  minlength="6">
+            </mat-form-field>
+            <mat-error *ngIf="passErr">{{passErrMsg}}</mat-error>
+          </div>
+
+        </div>
+
+        <button mat-button type="submit" class="btn-primary btn-block btn " >Sign In</button>
+      </form>
+    </mat-card>
+  </div>
+
+</div>
+
+<div class="dialog" *ngIf="loginAlert">
+  <div class="dialog-content animated bounceIn">
+    <div class="d-header danger">
+      <p class="d-title">Alert</p>
+      <button class="d-close" (click)="this.loginAlert = false;"></button>
+    </div>
+    <div class="d-content text-center">
+      <h2>
+        Login Failed
+      </h2>
+      <p>
+        please check your username and password
+      </p>
+    </div>
+    <div class="d-button text-center">
+      <button mat-button class="btn btn-danger" (click)="this.loginAlert = false;">Exit</button>
+    </div>
+  </div>
+</div>

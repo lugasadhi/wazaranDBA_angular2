@@ -1,0 +1,84 @@
+<div id="checkdb">
+
+  <div class="navbar navbar-fix space-between">
+    <div class="">
+        <h2 class="main-title display-5 capitalize">Check Database</h2>
+    </div>
+    <app-menu></app-menu>
+  </div>
+
+  <div class="has-header container-fluid">
+    <h6></h6>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <mat-card class="col-sm-12 col-md-6 coiche-branch">
+          <mat-card-header>
+            <mat-card-title>
+              <h6 class="text-bold uppercase">
+                Choice Branch
+              </h6>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="row">
+              <mat-checkbox *ngFor="let item of list" class="col-md-4 col-sm-6 uppercase" color="primary" name="{{item.server}}" (change)="changed($event, item.server)"  ngModel="true">{{item.server}}</mat-checkbox>
+            </div>
+
+          </mat-card-content>
+          <mat-card-actions class="">
+            <button mat-button class="btn btn-primary btn-block" (click)="this.cdbdialog = true;dbccexe()">Execute</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <div class="dialog dialog-full" *ngIf="cdbdialog">
+  <!-- <div class="dialog result dialog-full" > -->
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header success">
+        <p class="d-title">Check Datbase Result</p>
+        <button class="d-close" (click)="this.cdbdialog = false;" [disabled]="this.serverlist.length != this.checkdbresult.length"></button>
+      </div>
+      <div class="d-content ">
+        <div class="row">
+          <div class="branches-name col-sm-4">
+            <div class="uppercase text-bold branch-name" *ngFor="let item of serverlist" style="padding-top: 12px;padding-bottom: 15px;">
+              <span>{{item.server}}</span>
+            </div>
+          </div>
+          <div class="chkdbres col-sm-8 ">
+            <div class="full d-flex space-between flex-wrap align-items-center" *ngFor="let item of checkdbresult" style="padding-bottom: 10px;padding-top: 5px;">
+              <i class="text-success fa fa-check" aria-hidden="true" *ngIf="item.status == 'Good'"></i>
+              <i class="text-danger fa fa-exclamation-triangle" aria-hidden="true" *ngIf="item.status == 'Has Error'"></i>
+              <button  mat-button class="btn btn-primary btn-sm" (click)="this.detBr = item.server; this.detCont = item.message[0].msg; this.dialDet = true;this.cdbdialog = false;">Check Result</button>
+            </div>
+            <div class="full d-flex space-between flex-wrap align-items-center" *ngIf="checkdbresult.length != serverlist.length" style="height:53px; padding-bottom: 10px; padding-top: 5px;">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-button text-right">
+        <button mat-button (click)="this.cdbdialog = false;" class="btn btn-danger" [disabled]="this.serverlist.length != this.checkdbresult.length">Exit</button>
+      </div>
+    </div>
+  </div>
+  <div class="dialog dialog-full" *ngIf="dialDet">
+    <div class="dialog-content animated bounceIn">
+      <div class="d-header primary">
+        <p class="d-title">Result CheckDB {{detBr}}</p>
+        <button class="d-close" (click)="this.cdbdialog = true;this.dialDet = false;"></button>
+      </div>
+      <div class="d-content" [innerHTML]="detCont">
+      </div>
+      <div class="d-button text-right">
+        <button mat-button class="btn btn-danger" (click)="this.cdbdialog = true;this.dialDet = false;">Exit</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="full-loading" *ngIf="loading">
+  <app-spiner></app-spiner>
+</div>
